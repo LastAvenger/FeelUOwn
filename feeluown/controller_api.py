@@ -43,11 +43,17 @@ class ControllerApi(object):
         if platform.system() == "Linux":
             ControllerApi.player.pause()
             ControllerApi.notify_widget.show_message("通知", "正在尝试调用VLC视频播放器播放MV")
-            subprocess.Popen(['vlc', url_high, '--play-and-exit', '-f'])
+            try:
+                subprocess.Popen(['vlc', url_high, '--play-and-exit', '-f'])
+            except FileNotFoundError:
+                ControllerApi.notify_widget.show_message("Error", "VLC视频播放器未安装")
         elif platform.system().lower() == 'Darwin'.lower():
             ControllerApi.player.pause()
             cls.view.ui.STATUS_BAR.showMessage(u"准备调用 QuickTime Player 播放mv", 4000)
-            subprocess.Popen(['open', '-a', 'QuickTime Player', url_high])
+            try:
+                subprocess.Popen(['open', '-a', 'QuickTime Player', url_high])
+            except FileNotFoundError:
+                ControllerApi.notify_widget.show_message("Error", "QuickTime Player未安装")
         else:
             cls.view.ui.STATUS_BAR.showMessage(u"程序已经将视频的播放地址复制到剪切板", 5000)
 
